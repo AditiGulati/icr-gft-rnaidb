@@ -1,0 +1,4 @@
+Filename	Plate	Replicate
+P1.txt	1	1
+P2.txt	1	2
+P3.txt	1	3

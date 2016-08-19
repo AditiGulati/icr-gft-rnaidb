@@ -1,0 +1,14 @@
+Wells: 384		
+Plates: 4		
+Plate	Well	Content
+*	*	sample
+*	[A-P]01	empty
+*	[A-P]24	empty
+*	[A-D]02	siCON1
+*	[E-H]02	siCON2
+*	[I-L]02	allstar
+*	[M-P]02	siPLK1
+*	[A-D]23	siCON1
+*	[E-H]23	siCON2
+*	[I-L]23	allstar
+*	[M-P]23	siPLK1

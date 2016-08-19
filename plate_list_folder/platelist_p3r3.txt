@@ -1,0 +1,1 @@
+Filename	Plate	ReplicateP1R1.txt	1	1P1R2.txt	1	2P1R3.txt	1	3P2R1.txt	2	1P2R2.txt	2	2P2R3.txt	2	3P3R1.txt	3	1P3R2.txt	3	2P3R3.txt	3	3

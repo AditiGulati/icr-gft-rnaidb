@@ -1,0 +1,23 @@
+Wells: 384		
+Plates: 7		
+Plate	Well	Content
+*	*	sample
+*	[M-P]0[1-2]	plk1
+*	[M-P]2[3-4]	plk1
+*	[A-D]2[3-4]	allstar
+*	[A-D]0[1-2]	allstar
+*	[E-H]0[1-2]	sicon1
+*	[E-H]2[3-4]	sicon1
+*	[I-L]0[1-2]	KRAS
+*	[I-L]2[3-4]	KRAS
+4	[I-L]0[1-2]	KRAS
+4	[I-L]2[3-4]	KRAS
+5	[I-L]0[1-2]	KRAS
+5	[I-L]2[3-4]	KRAS
+6	[I-L]0[1-2]	KRAS
+6	[I-L]2[3-4]	KRAS
+7	[I-L]0[1-2]	KRAS
+7	[I-L]2[3-4]	KRAS
+3	"[B,D,F,H,J,L,N,P][0-2][0-9]"	empty
+*	[A-P]01	empty
+*	[A-P]24	empty
