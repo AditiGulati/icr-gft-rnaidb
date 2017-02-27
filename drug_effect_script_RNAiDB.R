@@ -4,13 +4,13 @@
 
 inputFiles = list.files()
 
-file <- grep("DMSO", inputFiles, ignore.case=T)
+file <- grep("summaryFile1_", inputFiles, ignore.case=T)
 
 for (i in 1:length(inputFiles)) {
   if (i == file) {
-    dmsoFilePath = inputFiles[i]
+    dmso_File_Path = inputFiles[i]
   }else{
-    drugFilePath = inputFiles[i]
+    drug_File_Path = inputFiles[i]
   }
 }
 
@@ -18,7 +18,7 @@ drug_effect <- NULL
 
 # read in the dmso file
 dmso <- read.table(
-  dmsoFilePath,
+  dmso_File_Path,
   head=T,
   sep="\t",
   check.names=FALSE,
@@ -28,7 +28,7 @@ dmso <- dmso[ order(dmso[,1],dmso[,4]), ]
 
 # read in the dmso file
 drug <- read.table(
-  drugFilePath,
+  drug_File_Path,
   head=T,
   sep="\t",
   check.names=FALSE,
@@ -270,13 +270,67 @@ names(drug_effect)[23] <- paste("drug_r2_log2_plate_centered")
 names(drug_effect)[24] <- paste("drug_r3_log2_plate_centered") 
 
 ##
-## Calculate zscores  
-## for each rep
+## median of plate-centered data
 ##
 
-column <- NULL
-zscore_columns <- matrix(data=rep(NA, times=6*length(drug_effect$Sample)), ncol=6, nrow=length(drug_effect$Sample))
-plate_centered_columns <- cbind(drug_effect[,19:24])
+dmso_pcentered_median <- NULL
+drug_pcentered_median <- NULL
+de_pcentered_median <- NULL
+
+columns19_21 <- cbind(drug_effect[,19:21])
+columns19_21 <- as.matrix(columns19_21)
+row <- NULL
+for (row in 1:nrow(columns19_21)) {
+  drug_pcentered_med <- NULL
+  dmso_pcentered_med <- median(columns19_21[row,], na.rm=TRUE)
+  dmso_pcentered_median <- rbind(dmso_pcentered_median, dmso_pcentered_med)
+  colnames(dmso_pcentered_median) <- "dmso_median_log2_plate_centered"
+}
+
+columns22_24 <- cbind(drug_effect[,22:24])
+columns22_24 <- as.matrix(columns22_24)
+row <- NULL
+for (row in 1:nrow(columns22_24)) {
+  drug_pcentered_med <- NULL
+  drug_pcentered_med <- median(columns22_24[row,], na.rm=TRUE)
+  drug_pcentered_median <- rbind(drug_pcentered_median, drug_pcentered_med)
+  colnames(drug_pcentered_median) <- "drug_median_log2_plate_centered"
+}
+#add column 25 & 26 to the drug_effect file
+drug_effect <- cbind(drug_effect, dmso_pcentered_median, drug_pcentered_median)
+
+##
+## Calculate DRUG EFFECT (DE) 
+## (drug_log2_plate_centered_score - dmso_log2_plate_centered_score)
+##
+
+median_pcentered_scores <- NULL
+median_pcentered_scores <- cbind(drug_effect[25], drug_effect[26])
+row <- NULL
+DE_score <- NULL
+drug_value <- NULL
+dmso_value <- NULL
+for (row in 1:nrow(median_pcentered_scores)){
+  de_value <- NULL
+  drug_value <- median_pcentered_scores[row,2]
+  dmso_value <- median_pcentered_scores[row,1]
+  de_value <- (drug_value) - (dmso_value)
+  DE_score <- rbind(DE_score, de_value)
+  nrow(DE_score)
+  colnames(DE_score) <- "DE" 
+}
+## add column 27 to the drug_effect file ##
+drug_effect <- cbind(drug_effect, DE_score)
+
+##
+## Calculate Z-scores for 
+## median DMSO and Drug
+## plate-centered scores
+##
+
+#column <- NULL
+zscore_columns <- matrix(data=rep(NA, times=3*length(drug_effect$Sample)), ncol=3, nrow=length(drug_effect$Sample))
+plate_centered_columns <- drug_effect[,25:27]
 
 #control_MEDIAN <- NULL
 control_MAD <- NULL
@@ -303,10 +357,10 @@ for (column in 1:ncol(plate_centered_columns)) {
   }
   for (sublib in sublibs) {
     sample_rows <- NULL
-    zscore_sublib_column <- NULL
     sample_rows <- which(
       drug_effect$Sample == "SAMPLE" & 
-        drug_effect$sublib == sublib)
+        drug_effect$sublib == sublib
+        )
     #sample_MEDIAN <- median(plate_centered_columns[sample_rows,column], na.rm = TRUE)
     #print(sample_MEDIAN)
     sample_MAD <- mad(plate_centered_columns[sample_rows,column], na.rm = TRUE)
@@ -316,85 +370,30 @@ for (column in 1:ncol(plate_centered_columns)) {
     }
   }
 }
-#add columns 25_30 to the drug_effect file
+
+#add columns 28_30 to the drug_effect file
 drug_effect <- cbind(drug_effect, zscore_columns)
 
-names(drug_effect)[25] <- paste("dmso_r1_zscore") 
-names(drug_effect)[26] <- paste("dmso_r2_zscore")
-names(drug_effect)[27] <- paste("dmso_r3_zscore")  
-names(drug_effect)[28] <- paste("drug_r1_zscore")
-names(drug_effect)[29] <- paste("drug_r2_zscore") 
-names(drug_effect)[30] <- paste("drug_r3_zscore")  
-
-##
-## calculate median of   
-## zscores in DMSO
-##
-
-dmso_z_median <- NULL
-drug_z_median <- NULL
-de_z_median <- NULL
-
-columns25_27 <- cbind(drug_effect[,25:27])
-columns25_27 <- as.matrix(columns25_27)
-row <- NULL
-for (row in 1:nrow(columns25_27)) {
-  drug_z_med <- NULL
-  dmso_z_med <- median(columns25_27[row,], na.rm=TRUE)
-  dmso_z_median <- rbind(dmso_z_median, dmso_z_med)
-  colnames(dmso_z_median) <- "dmso_median_Zscore"
-}
-
-columns28_30 <- cbind(drug_effect[,28:30])
-columns28_30 <- as.matrix(columns28_30)
-row <- NULL
-for (row in 1:nrow(columns28_30)) {
-  drug_z_med <- NULL
-  drug_z_med <- median(columns28_30[row,], na.rm=TRUE)
-  drug_z_median <- rbind(drug_z_median, drug_z_med)
-  colnames(drug_z_median) <- "drug_median_Zscore"
-}
-
-#add column 31 & 32 to the drug_effect file
-drug_effect <- cbind(drug_effect, dmso_z_median, drug_z_median)
-
-##
-## Calculate DRUG EFFECT (DE) 
-## 3*(drug_rep - dmso_rep)
-##
-
-median_zscores <- NULL
-median_zscores <- cbind(drug_effect[31], drug_effect[32])
-row <- NULL
-DE_med <- NULL
-drug_value <- NULL
-dmso_value <- NULL
-for (row in 1:nrow(median_zscores)){
-  de_med <- NULL
-  drug_value <- median_zscores[row,2]
-  dmso_value <- median_zscores[row,1]
-  de_med <- (drug_value) - (dmso_value)
-  DE_med <- rbind(DE_med, de_med)
-  nrow(DE_med)
-  colnames(DE_med) <- "DE_median_Zscore" 
-}
-## add column 25 to the drug_effect file ##
-drug_effect <- cbind(drug_effect, DE_med)
+names(drug_effect)[28] <- paste("dmso_Zscore") 
+names(drug_effect)[29] <- paste("drug_Zscore")
+names(drug_effect)[30] <- paste("DE_Zscore")
 
 ##
 ## round off the values in drug effect file to 3 decimal places
 ##
-
-drug_effect$dmso_median_zscore <- round(drug_effect$dmso_median_Zscore, digits=2)
-drug_effect$drug_median_zscore <- round(drug_effect$drug_median_Zscore, digits=2)
-drug_effect$DE_median_zscore <- round(drug_effect$DE_median_Zscore, digits=2)
+ 
+#drug_effect$DE_zscore <- round(drug_effect$DE_zscore, digits=2)
 
 ##
 ## write drug_effect results to a text file
 ##
 
-screen_DE_dir_name = gsub("_summary.txt","",drugFilePath)
-screen_DE_dir_name = paste("drugEffect_", screen_DE_dir_name, sep="")
+short_drug = gsub("_summary_with_rep_zscores.txt","",drug_File_Path)
+shorter_drug = gsub("summaryFile2_","",short_drug)
+short_dmso = gsub("_summary_with_rep_zscores.txt","",dmso_File_Path)
+shorter_dmso = gsub("summaryFile1_","",short_dmso)
+
+screen_DE_dir_name = paste("drugEffect_", shorter_dmso,"_and_",shorter_drug, sep="")
 
 write.table(
   drug_effect, 
