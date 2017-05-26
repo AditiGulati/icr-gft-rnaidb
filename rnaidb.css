@@ -169,7 +169,36 @@ hr {
   padding: 0;
   text-align: left;
 }
-
+#Message2 {
+  font-family: Helvetica;
+  color: green;
+  border: 0;
+  width: auto;
+  height: auto;
+  margin: 0 auto 0 auto;
+  padding: 0;
+  text-align: left;
+}
+#Message3 {
+  font-family: Helvetica;
+  color: blue;
+  border: 0;
+  width: auto;
+  height: auto;
+  margin: 0 auto 0 auto;
+  padding: 0;
+  text-align: left;
+}
+#Message4 {
+  font-family: Helvetica;
+  color: orange;
+  border: 0;
+  width: auto;
+  height: auto;
+  margin: 0 auto 0 auto;
+  padding: 0;
+  text-align: left;
+}
 #Note {
   font-family: Helvetica;
   font-size: 0.85em;
