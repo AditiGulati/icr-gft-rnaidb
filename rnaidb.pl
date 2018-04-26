@@ -25,7 +25,6 @@ my $conf_file = $script_name;
 $conf_file =~ s/pl$/conf/;
 
 ## stuff to configure when moving... ##
-
 my $users_file = './users.txt';
 my $temp_file_path = '/tmp/tmp.csv';
 

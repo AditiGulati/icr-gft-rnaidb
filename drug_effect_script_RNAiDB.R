@@ -65,12 +65,14 @@ for (value in 1:length(dmso$wellAnno)) {
     dmso$wellAnno[value] == "ALLSTAR DRUG" |
     dmso$wellAnno[value] == "ALLSTAR_DRUG" |
     dmso$wellAnno[value] == "PLK1 DRUG" | 
+    dmso$wellAnno[value] == "SIPLK1_DRUG" |
     dmso$wellAnno[value] == "SIPLK1_DRUG"
   ) {    
     sample[value] = "CONTROL" 
   }
   if (
-    dmso$wellAnno[value] == "EMPTY"
+    dmso$wellAnno[value] == "EMPTY"  |
+    dmso$wellAnno[value] == "MOCK" 
   ) {    
     sample[value] = "EMPTY"
   }
@@ -127,7 +129,8 @@ for (value in 1:length(dmso$wellAnno)) {
     dmso$Entrez_gene_ID[value] = "POS"
   }
   if (
-    dmso$wellAnno[value] == "EMPTY"
+    dmso$wellAnno[value] == "EMPTY" |
+    dmso$wellAnno[value] == "MOCK" 
   ) {    
     dmso$Entrez_gene_ID[value] = "EMPTY"
   }
